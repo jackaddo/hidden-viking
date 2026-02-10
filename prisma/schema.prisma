@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  phoneNumber String   @unique
+  password    String // Hashed password
+  fullName    String
+  role        String   @default("TEACHER") // "ADMIN" or "TEACHER"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  subjects Subject[]
+}
+
+model Candidate {
+  id          String   @id @default(uuid())
+  indexNumber String   @unique // Auto-generated e.g., 0106188001
+  firstName   String
+  surname     String
+  dob         DateTime
+  photoUrl    String?
+  parentPhone String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  scores Score[]
+}
+
+model Subject {
+  id   String @id @default(uuid())
+  name String @unique
+  type String // "CORE" or "ELECTIVE"
+
+  // Relations
+  teachers User[]
+  scores   Score[]
+}
+
+model MockExam {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g., "Mock 1 2024"
+  createdAt DateTime @default(now())
+
+  // Relations
+  scores Score[]
+}
+
+model Score {
+  id          String @id @default(uuid())
+  score       Float
+  candidateId String
+  subjectId   String
+  mockExamId  String
+
+  // Relations
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  mockExam  MockExam  @relation(fields: [mockExamId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, subjectId, mockExamId]) // One score per calculate per subject per mock
+}
