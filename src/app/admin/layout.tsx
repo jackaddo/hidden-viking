@@ -53,7 +53,7 @@ export default async function AdminLayout({
                     alignItems: "center",
                     borderBottom: "1px solid var(--border-color)"
                 }}>
-                    <h1 style={{ fontSize: "1.1rem", fontWeight: 700 }}>{session.user.name}</h1>
+                    <h1 style={{ fontSize: "1.1rem", fontWeight: 700 }}>{session?.user?.name}</h1>
                     <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Administrator</div>
                 </header>
 
