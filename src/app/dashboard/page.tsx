@@ -9,7 +9,7 @@ export default async function DashboardPage() {
         redirect("/auth/login");
     }
 
-    if (session.user.role === "ADMIN") {
+    if ((session.user as any).role === "ADMIN") {
         redirect("/admin/dashboard");
     } else {
         redirect("/teacher/dashboard");
